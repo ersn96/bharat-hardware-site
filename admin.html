@@ -1,0 +1,205 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>BHET Admin</title>
+<style>body{background:#07121a;color:#e6f9ef;font-family:Inter,Arial,sans-serif;padding:18px}input,textarea,select{background:#0b1220;border:1px solid #12202a;color:#e6f9ef;padding:8px;border-radius:6px}</style>
+
+<!-- Firebase (optional) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, setDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase/firebase-config.js";
+window.__USE_FIREBASE__ = !!(firebaseConfig && firebaseConfig.projectId);
+
+if(window.__USE_FIREBASE__){
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.__FB = { app, db, collection, getDocs, addDoc, setDoc, doc, onSnapshot };
+  console.info('Firebase enabled: products/orders will sync with Firestore');
+} else {
+  console.info('Firebase not configured. Using localStorage fallback.');
+}
+</script>
+
+</head><body>
+<script>if(localStorage.getItem('bhet_admin')!=='loggedin'){document.documentElement.innerHTML='<head><meta charset=\"utf-8\"><title>Unauthorized</title>
+<!-- Firebase (optional) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, setDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase/firebase-config.js";
+window.__USE_FIREBASE__ = !!(firebaseConfig && firebaseConfig.projectId);
+
+if(window.__USE_FIREBASE__){
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.__FB = { app, db, collection, getDocs, addDoc, setDoc, doc, onSnapshot };
+  console.info('Firebase enabled: products/orders will sync with Firestore');
+} else {
+  console.info('Firebase not configured. Using localStorage fallback.');
+}
+</script>
+
+</head><body style=\"background:#07121a;color:#f87171;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;height:100vh\"><div style=\"text-align:center\"><h2>Unauthorized Access</h2><p>Login via main site.</p></div>
+<script>
+// If Firebase is enabled, try load products from Firestore collection 'products' and replace local PRODUCTS
+async function tryLoadProductsFromFirestore(){
+  if(window.__USE_FIREBASE__ && window.__FB){
+    try{
+      const { db, collection, getDocs } = window.__FB;
+      const q = await getDocs(collection(db, 'products'));
+      const prods = q.docs.map(d=>({ id: d.id, ...d.data() }));
+      if(prods && prods.length>0){
+        // normalize IDs to numbers if possible
+        prods.forEach(p=>{ if(!p.id && p.id!==0) p.id = Date.now()+Math.floor(Math.random()*1000); });
+        localStorage.setItem('BHET_products', JSON.stringify(prods));
+        console.info('Products loaded from Firestore, saved to localStorage');
+        if(typeof renderProducts === 'function') renderProducts();
+      }
+    }catch(e){ console.warn('Firestore load failed', e); }
+  }
+}
+// Hook into page after load
+window.addEventListener('load', ()=>{ tryLoadProductsFromFirestore(); });
+// Function to send orders to Firestore
+async function sendOrderToFirestore(order){
+  if(window.__USE_FIREBASE__ && window.__FB){
+    try{
+      const { db, collection, addDoc } = window.__FB;
+      const docRef = await addDoc(collection(db, 'orders'), order);
+      console.info('Order stored in Firestore', docRef.id);
+      return {ok:true, id: docRef.id};
+    }catch(e){ console.warn('Order write failed', e); return {ok:false, error:e}; }
+  } else {
+    // fallback to localStorage orders
+    const o = JSON.parse(localStorage.getItem('BHET_orders')||'[]');
+    o.push(order); localStorage.setItem('BHET_orders', JSON.stringify(o)); return {ok:true, id: o.length};
+  }
+}
+// The site's existing checkout function (checkoutWhatsApp) will call sendOrderToFirestore(order) before opening WhatsApp if you want server persistence.
+// Example usage: sendOrderToFirestore({phone:'7768082083', items:[...], total:1234, createdAt:Date.now()});
+</script>
+
+</body>'; throw 'Unauthorized';}</script>
+
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <div><h2 style="color:#86efac">BHET Admin Panel</h2><div class="small">Logged in as admin</div></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button onclick="openChangePass()" style="background:#0ea5e9;color:#072f21;padding:8px 12px;border-radius:6px;border:0">Change Password</button>
+    <button onclick="logout()" style="background:#dc2626;color:white;padding:8px 12px;border-radius:6px;border:0">Logout</button>
+  </div>
+</div>
+
+<section style="margin-top:12px">
+  <h3 style="color:#a7f3d0">Create Coupon</h3>
+  <div style="display:flex;gap:8px;align-items:center">
+    <input id="couponCode" placeholder="Code"/>
+    <input id="couponAmt" placeholder="Amount (₹)"/>
+    <button onclick="createCoupon()" style="background:#16a34a;color:#072f21;padding:8px 12px;border-radius:6px">Create</button>
+  </div>
+  <div id="couponList" style="margin-top:8px"></div>
+</section>
+
+<section style="margin-top:18px">
+  <h3 style="color:#a7f3d0">Add Product</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <input id="pTitle" placeholder="Title"/>
+    <input id="pCat" placeholder="Category"/>
+    <input id="pPrice" placeholder="Price"/>
+    <input id="pStock" placeholder="Stock"/>
+    <input id="pImgs" type="file" accept="image/*" multiple/>
+    <textarea id="pDesc" placeholder="Description" style="grid-column:1/3"></textarea>
+  </div>
+  <div style="margin-top:8px"><button onclick="addProduct()" style="background:#16a34a;color:#072f21;padding:8px 12px;border-radius:6px">Add Product</button></div>
+</section>
+
+<section style="margin-top:18px">
+  <h3 style="color:#a7f3d0">Bulk CSV Upload</h3>
+  <div style="display:flex;gap:8px;align-items:center">
+    <input id="csvfile" type="file" accept=".csv"/>
+    <button onclick="importCSV()" style="background:#16a34a;color:#072f21;padding:8px 12px;border-radius:6px">Import</button>
+  </div>
+  <div class="small" style="margin-top:6px;color:#94a3b8">CSV: title,category,price,stock,desc,imagePath(optional)</div>
+</section>
+
+<section style="margin-top:18px">
+  <h3 style="color:#a7f3d0">Existing Products</h3>
+  <div id="prodList"></div>
+</section>
+
+<!-- Change Password Modal -->
+<div id="changePass" style="display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center">
+  <div style="background:#111;padding:20px;border-radius:8px;max-width:360px">
+    <h3 style="color:#86efac">Change Admin Password</h3>
+    <input id="oldp" type="password" placeholder="Old Password" style="width:100%;padding:8px;margin-top:8px"/>
+    <input id="newp" type="password" placeholder="New Password" style="width:100%;padding:8px;margin-top:8px"/>
+    <input id="confp" type="password" placeholder="Confirm Password" style="width:100%;padding:8px;margin-top:8px"/>
+    <div style="margin-top:8px;display:flex;gap:8px"><button onclick="changePass()" style="background:#16a34a;color:#072f21;padding:8px;border-radius:6px">Update</button><button onclick="closeChange()" class="ghost">Cancel</button></div>
+  </div>
+</div>
+
+<script>
+function getProducts(){ return JSON.parse(localStorage.getItem('BHET_products')||'[]'); }
+function setProducts(v){ localStorage.setItem('BHET_products', JSON.stringify(v)); }
+function getCoupons(){ return JSON.parse(localStorage.getItem('bhet_coupons')||'[]'); }
+function setCoupons(v){ localStorage.setItem('bhet_coupons', JSON.stringify(v)); }
+
+function renderCoupons(){ var cs=getCoupons(); var el=document.getElementById('couponList'); el.innerHTML=''; cs.forEach(c=>{ var d=document.createElement('div'); d.textContent=c.code+' => ₹'+c.amount; el.appendChild(d); }); }
+function createCoupon(){ var code=document.getElementById('couponCode').value.trim(); var amt=parseInt(document.getElementById('couponAmt').value)||0; if(!code) return alert('Enter code'); var cs=getCoupons(); cs.push({code:code,amount:amt}); setCoupons(cs); renderCoupons(); alert('Coupon created'); }
+
+function addProduct(){ var title=document.getElementById('pTitle').value.trim(), cat=document.getElementById('pCat').value.trim(); var price=parseFloat(document.getElementById('pPrice').value)||0; var stock=parseInt(document.getElementById('pStock').value)||0; var desc=document.getElementById('pDesc').value.trim(); var files=document.getElementById('pImgs').files; if(!title||!cat) return alert('Title & Category required'); if(files&&files.length>0){ var readers=Array.from(files).map(f=>{ return new Promise(res=>{ var r=new FileReader(); r.onload=function(e){ res(e.target.result); }; r.readAsDataURL(f); }); }); Promise.all(readers).then(imgs=>{ saveNewProduct(title,cat,price,stock,desc,imgs); }); } else { saveNewProduct(title,cat,price,stock,desc,['assets/product_1.png']); } }
+function saveNewProduct(title,cat,price,stock,desc,imgs){ var prods=getProducts(); var id=(prods.reduce((m,it)=>Math.max(m,it.id||0),0)||0)+1; prods.push({id:id,title:title,cat:cat,price:price,desc:desc,stock:stock,imgs:imgs,variants:[{name:'Default',price:price,stock:stock}],created:Date.now()}); setProducts(prods); renderList(); alert('Added'); clearForm(); }
+function clearForm(){ document.getElementById('pTitle').value=''; document.getElementById('pCat').value=''; document.getElementById('pPrice').value=''; document.getElementById('pStock').value=''; document.getElementById('pDesc').value=''; document.getElementById('pImgs').value=''; }
+
+function renderList(){ var list=getProducts(); var el=document.getElementById('prodList'); el.innerHTML=''; list.forEach(p=>{ var d=document.createElement('div'); d.style.display='flex'; d.style.justifyContent='space-between'; d.style.padding='8px 0'; d.style.borderBottom='1px solid #12202a'; d.innerHTML='<div><strong>'+p.title+'</strong><div style=\"color:#94a3b8\">'+p.cat+' • ₹'+p.price+' • Stock: '+(p.stock||0)+'</div></div><div><button onclick=\"removeProduct('+p.id+')\">Delete</button></div>'; el.appendChild(d); }); }
+function removeProduct(id){ if(!confirm('Delete?')) return; var list=getProducts().filter(x=>x.id!==id); setProducts(list); renderList(); alert('Deleted'); }
+
+function importCSV(){ var f=document.getElementById('csvfile'); if(!f.files||!f.files[0]) return alert('Select CSV'); var r=new FileReader(); r.onload=function(e){ var rows=e.target.result.split('\\n'); var prods=getProducts(); rows.forEach(row=>{ var cols=row.split(','); if(cols.length<4) return; var title=cols[0].trim(), cat=cols[1].trim(), price=parseFloat(cols[2])||0, stock=parseInt(cols[3])||0, desc=cols[4]||'', img=cols[5]||'assets/product_1.png'; var id=(prods.reduce((m,it)=>Math.max(m,it.id||0),0)||0)+1; prods.push({id:id,title:title,cat:cat,price:price,stock:stock,desc:desc,imgs:[img],variants:[{name:'Default',price:price,stock:stock}],created:Date.now()}); }); setProducts(prods); renderList(); alert('Imported'); }; r.readAsText(f.files[0]); }
+
+function openChangePass(){ document.getElementById('changePass').style.display='flex'; }
+function closeChange(){ document.getElementById('changePass').style.display='none'; }
+
+function changePass(){ var oldp=document.getElementById('oldp').value.trim(); var newp=document.getElementById('newp').value.trim(); var conf=document.getElementById('confp').value.trim(); var saved=localStorage.getItem('bhet_admin_pass')||'7768082083'; if(oldp!==saved){ alert('Old password incorrect'); return; } if(newp!==conf){ alert('Passwords do not match'); return; } localStorage.setItem('bhet_admin_pass', newp); alert('Password updated'); closeChange(); }
+
+function logout(){ localStorage.removeItem('bhet_admin'); alert('Logged out'); window.location.href='index.html'; }
+
+renderCoupons(); renderList();
+</script>
+
+<script>
+// If Firebase is enabled, try load products from Firestore collection 'products' and replace local PRODUCTS
+async function tryLoadProductsFromFirestore(){
+  if(window.__USE_FIREBASE__ && window.__FB){
+    try{
+      const { db, collection, getDocs } = window.__FB;
+      const q = await getDocs(collection(db, 'products'));
+      const prods = q.docs.map(d=>({ id: d.id, ...d.data() }));
+      if(prods && prods.length>0){
+        // normalize IDs to numbers if possible
+        prods.forEach(p=>{ if(!p.id && p.id!==0) p.id = Date.now()+Math.floor(Math.random()*1000); });
+        localStorage.setItem('BHET_products', JSON.stringify(prods));
+        console.info('Products loaded from Firestore, saved to localStorage');
+        if(typeof renderProducts === 'function') renderProducts();
+      }
+    }catch(e){ console.warn('Firestore load failed', e); }
+  }
+}
+// Hook into page after load
+window.addEventListener('load', ()=>{ tryLoadProductsFromFirestore(); });
+// Function to send orders to Firestore
+async function sendOrderToFirestore(order){
+  if(window.__USE_FIREBASE__ && window.__FB){
+    try{
+      const { db, collection, addDoc } = window.__FB;
+      const docRef = await addDoc(collection(db, 'orders'), order);
+      console.info('Order stored in Firestore', docRef.id);
+      return {ok:true, id: docRef.id};
+    }catch(e){ console.warn('Order write failed', e); return {ok:false, error:e}; }
+  } else {
+    // fallback to localStorage orders
+    const o = JSON.parse(localStorage.getItem('BHET_orders')||'[]');
+    o.push(order); localStorage.setItem('BHET_orders', JSON.stringify(o)); return {ok:true, id: o.length};
+  }
+}
+// The site's existing checkout function (checkoutWhatsApp) will call sendOrderToFirestore(order) before opening WhatsApp if you want server persistence.
+// Example usage: sendOrderToFirestore({phone:'7768082083', items:[...], total:1234, createdAt:Date.now()});
+</script>
+
+</body></html>

@@ -1,0 +1,8 @@
+Instructions to enable Firebase (Firestore) for products & orders:
+
+1. Create a Firebase project at https://console.firebase.google.com/
+2. Enable Firestore database (start in test mode for quick setup).
+3. In Project Settings > SDK, copy the config object and paste into firebase/firebase-config.js replacing the exported object.
+4. The site will detect firebase-config.js and automatically load products from Firestore collection 'products' and send orders to 'orders'.
+
+Client-side code will fallback to localStorage if firebaseConfig is null.

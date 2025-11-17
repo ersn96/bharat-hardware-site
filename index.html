@@ -51,18 +51,40 @@ if(window.__USE_FIREBASE__){
 }
 </script>
 
+
+<style id="bhet-admin-hide">
+/* Hide admin UI elements from public view */
+#admin-login, #adminPanel, #changePassBox, #changePass, #changePasswordPanel, #adminPanelWrap, #admin-section, #admin-login-box {
+  display: none !important;
+}
+/* hide any nav admin-link */
+#mainNav a#admin-link, a.admin-link, .nav-admin { display:none !important; }
+/* ensure admin.html not indexed */
+</style>
+
 </head>
 <body>
 <header>
   <div class="container header-inner">
-    <div class="brand" style="display:flex;align-items:center;gap:12px">
-      <img src="assets/logo/logo_option_3.png" alt="logo">
-      <div style="display:flex;flex-direction:column;line-height:1">
-        <div style="font-weight:800;color:#86efac">Bharat Hardware Electricals & Tools (BHET)</div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="small">Nandura, Buldhana • <a href="https://wa.me/917768082083" style="color:#86efac">7768082083</a></div>
-          <div style="background:#07221a;border:1px solid #143523;padding:6px 8px;border-radius:6px;color:#a7f3d0;font-weight:700">भेट</div>
+    
+<div class="header-3d" style="display:flex;align-items:center;gap:14px;padding:10px 0;">
+    <img src="assets/logo/logo_option_3.png" alt="logo" style="height:50px;border-radius:8px;">
+    <div style="display:flex;flex-direction:column;line-height:1.05;">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-size:20px;font-weight:800;color:#86efac;text-shadow:1px 1px 0 #052e24;">
+                Bharat Hardware Electricals & Tools
+            </div>
+            <div style="font-size:18px;font-weight:900;color:#a7f3d0; text-shadow: 0 0 6px #22c55e;">
+                (BHET–भेट 🤝)
+            </div>
         </div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:12px;font-size:13px;color:#94a3b8;">
+            <div><strong style="color:#c7f9d8">Nandura, Buldhana</strong> • <a href='tel:7768082083' style='color:#86efac;text-decoration:none;'>7768082083</a></div>
+            <div style="color:#8ee7b1;font-size:13px;">Your One-Stop Shop for Tools, Electricals & Hardware</div>
+        </div>
+    </div>
+</div>
+
       </div>
     </div>
     <nav id="mainNav">
@@ -71,7 +93,7 @@ if(window.__USE_FIREBASE__){
       <a data-section="cart">Cart <span id="cartCount" style="margin-left:6px;background:#05211a;color:#86efac;padding:4px 8px;border-radius:6px">0</span></a>
       <a data-section="wishlist">Wishlist</a>
       <a data-section="contact">Contact</a>
-      <a id="admin-link" style="display:none">Admin</a>
+      
     </nav>
     <div style="display:flex;align-items:center;gap:8px">
       <button class="ghost" id="themeToggle">Dark</button>
@@ -351,6 +373,38 @@ async function sendOrderToFirestore(order){
 }
 // The site's existing checkout function (checkoutWhatsApp) will call sendOrderToFirestore(order) before opening WhatsApp if you want server persistence.
 // Example usage: sendOrderToFirestore({phone:'7768082083', items:[...], total:1234, createdAt:Date.now()});
+</script>
+
+
+<script>
+// Secret admin modal opener (Shift + A). Admin UI remains hidden unless triggered.
+document.addEventListener('keydown', function(e){
+  if(e.shiftKey && (e.key === 'A' || e.key === 'a')){
+    // Try to find existing admin login modal ids and show them
+    var ids = ['admin-login','admin-login-box','admin-login-modal','adminPanel','adminPanelWrap'];
+    var shown = false;
+    ids.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){ el.style.display = 'flex'; shown = true; }
+    });
+    // If admin.html exists, open in new tab (secure) after login flow handled in-site
+    if(!shown && window.location.origin){
+      // fallback: open admin.html in new tab (itself requires session check)
+      window.open('admin.html','_blank');
+    }
+  }
+});
+// Ensure admin links not visible in nav even if present
+window.addEventListener('load', function(){
+  try{
+    var adminLink = document.querySelector('#mainNav a#admin-link');
+    if(adminLink) adminLink.style.display='none';
+    // remove any element with text 'Admin' in nav
+    document.querySelectorAll('#mainNav a').forEach(function(a){
+      if(a.textContent && a.textContent.trim().toLowerCase()==='admin') a.style.display='none';
+    });
+  }catch(e){}
+});
 </script>
 
 </body>

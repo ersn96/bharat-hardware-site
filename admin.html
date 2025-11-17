@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BHET Admin</title>
+<link rel="stylesheet" href="styles/style.css"></head><body>
+<script>if(localStorage.getItem('bhet_admin')!=='loggedin'){document.documentElement.innerHTML='<body style="background:#07121a;color:#f87171;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;height:100vh"><div style="text-align:center"><h2>Unauthorized</h2><p>Login via main site (Shift + A).</p></div></body>'; throw 'Unauthorized';}</script>
+<div class="container"><h2 style="color:#86efac">BHET Admin Panel</h2>
+<div class="card">
+  <h3>Add / Edit Product</h3>
+  <input id="pTitle" placeholder="Title"/><br><br>
+  <input id="pCat" placeholder="Category"/><br><br>
+  <input id="pPrice" placeholder="Price"/><br><br>
+  <input id="pImgs" placeholder="Image path (assets/products/product_1.png)"/><br><br>
+  <textarea id="pDesc" placeholder="Description"></textarea><br><br>
+  <button class="btn" onclick="addProduct()">Add Product</button>
+</div>
+<div id="prodList" style="margin-top:12px"></div>
+<button onclick="localStorage.removeItem('bhet_admin'); alert('Logged out'); location.href='../index.html'">Logout</button>
+</div>
+<script>
+function getProducts(){ return JSON.parse(localStorage.getItem('BHET_products')||'[]'); }
+function setProducts(v){ localStorage.setItem('BHET_products', JSON.stringify(v)); }
+function renderList(){ var list=getProducts(); var el=document.getElementById('prodList'); el.innerHTML=''; list.forEach(p=>{ var d=document.createElement('div'); d.style.padding='8px 0'; d.innerHTML='<strong>'+p.title+'</strong> - ₹'+p.price+' <button onclick="removeProduct('+p.id+')">Delete</button>'; el.appendChild(d); }); }
+function addProduct(){ var title=document.getElementById('pTitle').value.trim(); var cat=document.getElementById('pCat').value.trim(); var price=parseFloat(document.getElementById('pPrice').value)||0; var img=document.getElementById('pImgs').value.trim()||'assets/products/product_1.png'; var desc=document.getElementById('pDesc').value.trim(); var list=getProducts(); var id=(list.reduce((m,it)=>Math.max(m,it.id||0),0)||0)+1; list.push({id:id,title:title,category:cat,price:price,desc:desc,stock:10,imgs:[img],created:Date.now()}); setProducts(list); renderList(); alert('Added'); }
+function removeProduct(id){ if(!confirm('Delete?')) return; var list=getProducts().filter(x=>x.id!==id); setProducts(list); renderList(); alert('Deleted'); }
+renderList();
+</script>
+</body></html>

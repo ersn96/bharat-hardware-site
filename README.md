@@ -1,1 +1,1 @@
-BHET Complete Website package. Add to repo root for GitHub Pages.
+BHET Full Premium Site - ready for GitHub Pages. Replace assets/products images with your real photos.

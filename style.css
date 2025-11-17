@@ -1,0 +1,24 @@
+:root{--bg:#0f1720;--panel:#0b1220;--muted:#94a3b8;--accent:#16a34a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f9ef}
+.container{max-width:1100px;margin:0 auto;padding:14px}
+header{background:var(--panel);border-bottom:1px solid #12202a;position:sticky;top:0;z-index:60;padding:10px 0}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.header-3d{display:flex;align-items:center;gap:14px}
+.header-3d img{width:56px;height:56px;border-radius:8px}
+.header-3d-text{font-size:20px;font-weight:800;color:#86efac;text-shadow:1px 1px 0 #052e24}
+.header-3d-sub{font-size:13px;color:#94a3b8;margin-top:6px}
+nav{display:flex;align-items:center;gap:12px;white-space:nowrap}
+nav a{color:var(--muted);margin:0 6px;padding:8px 10px;border-radius:6px;text-decoration:none;font-weight:600;cursor:pointer}
+nav a.active{background:var(--accent);color:#072f21}
+.btn{background:var(--accent);color:#072f21;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+.ghost{background:transparent;border:1px solid #203136;color:#cddcdc;padding:8px 10px;border-radius:8px;cursor:pointer}
+.card{background:linear-gradient(180deg, rgba(12,18,22,0.85), rgba(6,12,14,0.75));border:1px solid #132028;padding:12px;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:12px}
+.imgwrap{height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;background:#06251e}
+.prod-title{font-weight:700;color:#dfffe8}
+.small{color:var(--muted);font-size:13px}
+.footer{border-top:1px solid #12202a;padding:18px 0;margin-top:20px;text-align:center;color:var(--muted)}
+.light-theme{--bg:#f6f6f6;--panel:#ffffff;--muted:#334155;color:#071021}
+.badge-off{background:linear-gradient(90deg,#16a34a,#86efac);color:#042f1b;padding:4px 8px;border-radius:6px;font-weight:800;font-size:12px;margin-left:8px}
+.product-price-wrap{display:flex;align-items:center;gap:8px;margin-top:8px}
+@media(max-width:600px){.header-3d-text{font-size:16px}.imgwrap{height:140px}}

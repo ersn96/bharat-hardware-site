@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bharat Hardware Electricals & Tools (BHET–भेट 🤝)</title>
+<link rel="stylesheet" href="styles/style.css">
+<meta name="description" content="BHET - Hardware, Electricals & Tools in Nandura, Buldhana.">
+</head>
+<body>
+<header>
+  <div class="container header-inner">
+    <div class="header-3d">
+      <img src="assets/logo/logo_option_3.png" alt="logo">
+      <div>
+        <div class="header-3d-text">Bharat Hardware Electricals & Tools <span style="color:#a7f3d0">(BHET–भेट 🤝)</span></div>
+        <div class="header-3d-sub">Nandura, Buldhana • <a href="tel:7768082083" style="color:#86efac;text-decoration:none">7768082083</a><br>Your One-Stop Shop for Tools, Electricals & Hardware</div>
+      </div>
+    </div>
+    <nav id="mainNav">
+      <a data-section="home" class="active">Home</a>
+      <a data-section="products">Products</a>
+      <a data-section="cart">Cart <span id="cartCount" style="background:#05211a;color:#86efac;padding:4px 8px;border-radius:6px">0</span></a>
+      <a data-section="wishlist">Wishlist</a>
+      <a data-section="contact">Contact</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="ghost" id="themeToggle">Dark</button>
+      <button class="btn" onclick="document.getElementById('products').scrollIntoView()">Shop Now</button>
+    </div>
+  </div>
+</header>
+<main class="container">
+  <section id="home" style="padding:18px 0 6px;text-align:center">
+    <h1 style="font-size:28px;color:#86efac;margin-bottom:8px">Quality Tools & Electricals — Trusted by Professionals</h1>
+    <p class="small">Industrial-grade power tools, electricals and hand tools. Free local support. WhatsApp: <a href="https://wa.me/917768082083" style="color:#86efac">7768082083</a></p>
+  </section>
+  <section style="padding:6px 0">
+    <div class="card controls" style="display:flex;gap:8px;align-items:center">
+      <input id="searchInput" placeholder="Search products..." style="flex:1;padding:10px;border-radius:8px" />
+      <select id="catFilter" style="padding:10px;border-radius:8px"></select>
+      <select id="sortBy" style="padding:10px;border-radius:8px">
+        <option value="">Sort</option><option value="price_asc">Price ↑</option><option value="price_desc">Price ↓</option><option value="new">Newest</option>
+      </select>
+    </div>
+  </section>
+  <section id="products" style="padding:12px 0">
+    <div id="productsGrid" class="grid"></div>
+  </section>
+  <section id="cart" style="padding:12px 0;display:none">
+    <h2 style="color:#86efac">Cart</h2>
+    <div id="cartView" class="card">
+      <div id="cartList"></div>
+      <div id="cartSummary" style="margin-top:12px"></div>
+      <div style="margin-top:12px">
+        <button class="btn" onclick="checkoutWhatsApp()" style="margin-left:8px">Checkout via WhatsApp</button>
+      </div>
+    </div>
+  </section>
+  <section id="wishlist" style="padding:12px 0;display:none">
+    <h2 style="color:#86efac">Wishlist</h2>
+    <div id="wishlistGrid" class="grid"></div>
+  </section>
+  <section id="contact" style="padding:12px 0;display:none">
+    <h2 style="color:#86efac">Contact</h2>
+    <div class="card">
+      <textarea id="enquiry" placeholder="Write enquiry..." style="width:100%;height:120px;padding:8px;border-radius:6px"></textarea>
+      <div style="margin-top:8px"><button class="btn" onclick="sendEnquiry()">Send via WhatsApp</button></div>
+    </div>
+  </section>
+</main>
+<div id="reviewsSection" class="card" style="margin:12px auto;max-width:1100px;display:none"><h3 style="color:#86efac">Customer Reviews</h3><div id="reviewsList"></div></div>
+<footer class="footer">© 2025 BHET — Bharat Hardware Electricals & Tools | 7768082083</footer>
+<script>window.PRODUCTS = JSON.parse(localStorage.getItem('BHET_products')||'null') || (function(){ var arr=[]; for(var i=1;i<=12;i++){ arr.push({id:i,title:'Product '+i,category:['Hand Tools','Power Tools','Electricals'][i%3],price:499+i*200,desc:'Quality product '+i,stock:5+(i%7),imgs:['assets/products/product_'+i+'.png'],created:Date.now()-i*100000}); } localStorage.setItem('BHET_products', JSON.stringify(arr)); return arr; })();</script>
+<script type="module" src="firebase/firebase-config.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/products.js"></script>
+</body>
+</html>

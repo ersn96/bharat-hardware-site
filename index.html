@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bharat Hardware Electricals & Tools (BHET-भेट 🤝)</title></head>
+<body>
+<header style="background:#07121a;padding:12px;color:#e6f9ef">
+  <div style="max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="assets/logo/logo_option_3.png" style="height:56px;width:56px;border-radius:8px"/>
+      <div>
+        <div style="font-weight:800;color:#86efac;font-size:20px">Bharat Hardware Electricals & Tools <span style="color:#a7f3d0">(BHET–भेट 🤝)</span></div>
+        <div style="color:#94a3b8;font-size:13px">Nandura, Buldhana • <a href='tel:7768082083' style='color:#86efac;text-decoration:none'>7768082083</a><br>Your One-Stop Shop for Tools, Electricals & Hardware</div>
+      </div>
+    </div>
+    <div>
+      <button id="themeToggle">Dark</button>
+      <button onclick="location.href='#products'">Shop</button>
+    </div>
+  </div>
+</header>
+
+<main style="max-width:1000px;margin:18px auto;padding:0 12px">
+  <section id="products" style="margin-top:12px">
+    <div id="productsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px"></div>
+  </section>
+</main>
+
+<div id="reviewsSection" style="max-width:1000px;margin:12px auto;display:none"></div>
+<footer style="text-align:center;padding:18px;color:#94a3b8">© 2025 BHET — Bharat Hardware Electricals & Tools | 7768082083</footer>
+
+<script>window.PRODUCTS = JSON.parse(localStorage.getItem('BHET_products')||'null') || (function(){ var arr=[]; for(var i=1;i<=8;i++){ arr.push({id:i,title:'Drill Machine '+i,cat:'Power Tools',price:1500+i*200,desc:'High quality drill '+i,stock:5,imgs:['assets/products/product_'+i+'.png'],created:Date.now()-i*1000}); } localStorage.setItem('BHET_products', JSON.stringify(arr)); return arr; })();</script>
+<script type="module" src="firebase/firebase-config.js"></script>
+<script src="scripts/app.js"></script>
+<script>
+function renderProducts(){ var grid=document.getElementById('productsGrid'); grid.innerHTML=''; (window.PRODUCTS||[]).forEach(p=>{ var c=document.createElement('div'); c.className='card'; c.style.padding='12px'; c.style.background='#071a16'; c.innerHTML='<div style="height:160px;background:#05251f;border-radius:8px;display:flex;align-items:center;justify-content:center"><img src="'+p.imgs[0]+'" style="max-width:100%;max-height:100%"/></div><div style="margin-top:8px"><strong style="color:#dfffe8">'+p.title+'</strong><div style="color:#94a3b8">'+p.cat+'</div></div><div style="margin-top:8px;color:#86efac">₹'+p.price+'</div><div style="margin-top:8px"><button onclick="quickAdd('+p.id+')">Add</button></div>'; grid.appendChild(c); }); }
+document.addEventListener('DOMContentLoaded', function(){ renderProducts(); });
+function quickAdd(id){ var cart=JSON.parse(localStorage.getItem('BHET_cart')||'[]'); var p=(window.PRODUCTS||[]).find(x=>x.id===id); if(!p) return; cart.push({id:p.id,qty:1}); localStorage.setItem('BHET_cart', JSON.stringify(cart)); alert('Added to cart'); }
+</script>
+</body></html>

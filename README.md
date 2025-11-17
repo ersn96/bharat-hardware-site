@@ -1,1 +1,1 @@
-BHET Full Premium Site - ready for GitHub Pages. Replace assets/products images with your real photos.
+BHET Full Premium - GitHub upload ready.
